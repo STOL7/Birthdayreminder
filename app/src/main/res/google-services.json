@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "906533792485",
+    "firebase_url": "https://birthday-reminder-f7a5f.firebaseio.com",
+    "project_id": "birthday-reminder-f7a5f",
+    "storage_bucket": "birthday-reminder-f7a5f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906533792485:android:8e62384f9fcbb7ce",
+        "android_client_info": {
+          "package_name": "com.stl.birthdayreminder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "906533792485-fi6kigvp9cu23ln8so5v0bah6dholvi5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAECvSi_10SGMfor4EL1x-f2pmtixODnjA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "906533792485-fi6kigvp9cu23ln8so5v0bah6dholvi5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
