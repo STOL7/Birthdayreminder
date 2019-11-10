@@ -1,65 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
 
 
     <RelativeLayout
+
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:background="@drawable/input"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:id="@+id/rlt">
 
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile"
+            android:layout_height="40dp"
+            android:layout_width="40dp"
+
+            android:layout_marginLeft="5dp"
+            android:layout_centerVertical="true"
+            android:src="@color/colorAccent"/>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_toEndOf="@+id/profile"
+            android:layout_toRightOf="@+id/profile"
+            android:text="TextView"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/bdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/name"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/profile"
+            android:layout_toRightOf="@+id/profile"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textStyle="bold"
+            android:text="13/05/2000" />
+
+
         <ImageView
-                android:id="@+id/profile"
-                android:layout_height="150dp"
-                android:layout_width="110dp"
-                android:src="@mipmap/ic_launcher"
-                android:scaleType="fitXY"/>
+            android:id="@+id/ivFavorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
 
-        <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:id="@+id/name"
-                android:text="Head First Java"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="15dp"
-                android:textSize="20sp"
-                android:fontFamily="sans-serif"
-                android:textColor="@color/colorPrimary"
-                android:layout_toEndOf="@+id/profile"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:padding="5dp"
 
-                android:layout_toRightOf="@+id/profile"
-                android:textStyle="bold"/>
-
-        <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_below="@+id/name"
-                android:id="@+id/bdate"
-
-                android:layout_toEndOf="@+id/profile"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="20dp"
-
-                android:textSize="17sp"
-                android:layout_toRightOf="@+id/profile"
-                android:textColor="@color/colorPrimary"
-                android:text="Henry Ford"
-                android:fontFamily="sans-serif"
-                style="@style/AlertDialog.AppCompat.Light"/>
-
-        <TextView
-                android:layout_height="0dp"
-                android:layout_width="0dp"
-                android:id="@+id/urls"
-                android:text="urls"/>
+            app:srcCompat="@android:drawable/btn_star_big_on" />
 
 
     </RelativeLayout>
 
 
-</RelativeLayout>
+</LinearLayout>

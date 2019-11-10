@@ -36,7 +36,7 @@ public class WelcomeActivity extends AppCompatActivity
 
                 Intent intent  = new Intent(WelcomeActivity.this,MainActivity.class);
                 startActivity(intent);
-
+                finish();
             }
         },4000);
 

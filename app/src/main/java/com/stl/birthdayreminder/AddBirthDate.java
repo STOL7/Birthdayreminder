@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -20,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -39,8 +41,10 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 
 public class AddBirthDate extends AppCompatActivity
@@ -58,6 +62,7 @@ public class AddBirthDate extends AppCompatActivity
     ImageView profile;
     Button save;
     String profile_img="";
+
     Toolbar toolbar;
     StorageReference storageRef;
     @Override
@@ -67,7 +72,7 @@ public class AddBirthDate extends AppCompatActivity
         setContentView(R.layout.activity_add_birth_date);
 
         databaseReference=FirebaseDatabase.getInstance().getReference("User");
-
+        databaseReference.keepSynced(true);
         toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
@@ -128,7 +133,7 @@ public class AddBirthDate extends AppCompatActivity
             public void onClick(View view)
             {
                 if(imgUri != null)
-                UploadImage();
+                UploadData();
 
 
             }
@@ -165,16 +170,38 @@ public class AddBirthDate extends AppCompatActivity
         if(requestCode == 86 && data!= null )
         {
             imgUri = data.getData();
-            try {
+
+            try
+            {
+
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),imgUri);
 
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                // In case you want to compress your image, here it's at 40%
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 40, byteArrayOutputStream);
+                byte[] byteArray = byteArrayOutputStream.toByteArray();
 
-                bitmap.compress(Bitmap.CompressFormat.JPEG,10,baos);//to compress image
-                Imagebyte=baos.toByteArray();
 
-                profile.setImageBitmap(bitmap);
-            } catch (IOException e)
+                profile_img=Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+
+
+                String imageDataBytes = profile_img.substring(profile_img.indexOf(",")+1);
+
+                InputStream stream = new ByteArrayInputStream(Base64.decode(imageDataBytes.getBytes(), Base64.DEFAULT));
+
+                Bitmap bitmap1 = BitmapFactory.decodeStream(stream);
+
+
+                //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),imgUri);
+
+                //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                //bitmap.compress(Bitmap.CompressFormat.JPEG,10,baos);//to compress image
+                //Imagebyte=baos.toByteArray();
+
+                profile.setImageBitmap(bitmap1);
+            } catch (Exception e)
             {
                 e.printStackTrace();
             }
@@ -186,55 +213,10 @@ public class AddBirthDate extends AppCompatActivity
         }
     }
 
-    public  void UploadImage()
+
+    public void UploadData()
     {
-        progressDialog = new ProgressDialog(AddBirthDate.this);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setTitle("Uploading...");
-        progressDialog.setProgress(0);
-        progressDialog.show();
 
-
-            storageRef = FirebaseStorage.getInstance().getReference();
-
-            String time = System.currentTimeMillis()+"";
-            final StorageReference filepath = storageRef.child("Images").child(time);
-            filepath.putBytes(Imagebyte).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    progressDialog.dismiss();
-                    //profile_img = filepath.getDownloadUrl().toString();
-                    filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(@NonNull Uri uri) {
-                            profile_img = uri.toString();
-                            UploadData(databaseReference);
-                        }
-                    });
-
-                    finish();
-
-                    //Toast.makeText(AddBirthDate.this,"Succefully Uploaded",Toast.LENGTH_LONG).show();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    progressDialog.dismiss();
-                    Toast.makeText(AddBirthDate.this,e.getMessage(),Toast.LENGTH_LONG).show();
-                }
-            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot)
-                {
-                    Double progress =(100.0*taskSnapshot.getBytesTransferred())/taskSnapshot.getTotalByteCount();
-                    progressDialog.setProgress(progress.intValue());
-                }
-            });
-
-    }
-    public void UploadData(DatabaseReference databaseReference)
-    {
-        String id = databaseReference.push().getKey();
 
         u_bDate = bDate.getText().toString();
         u_name = name.getText().toString();
@@ -243,9 +225,15 @@ public class AddBirthDate extends AppCompatActivity
 
 
         //User user = new User(u_name,u_bDate,u_contact,u_email);
-        User user = new User(u_name,u_bDate,profile_img,u_contact,u_email);
-        databaseReference.child(id).setValue(user);
-
-       // Toast.makeText(this,"Successfullly made"+u_bDate+u_contact,Toast.LENGTH_LONG).show();
+        DatabaseHelper db = new DatabaseHelper(this);
+        if(db.insertData(u_name,u_email,u_bDate,profile_img,u_contact))
+        {
+            //Toast.makeText(this,"Successfullly made"+u_bDate+u_contact,Toast.LENGTH_LONG).show();
+            Intent intent  = new Intent(AddBirthDate.this,MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else
+            Toast.makeText(this,"not success"+u_bDate+u_contact,Toast.LENGTH_LONG).show();
     }
 }

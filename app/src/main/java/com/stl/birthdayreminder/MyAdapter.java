@@ -1,10 +1,13 @@
 package com.stl.birthdayreminder;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
-import com.bumptech.glide.Glide;
-
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
@@ -23,19 +26,21 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
 
 
     //public ArrayList<String> img=null;
-    public ArrayList<String> profile;
-    public ArrayList<String> name;
-    public ArrayList<String> bdate;
-    //public ArrayList<String> urls;
+    public ArrayList<String> names;
+    public ArrayList<String> emails;
+    public ArrayList<String> images;
+
+    public ArrayList<String> contacts;
+    public ArrayList<String> b_dates;
 
 
-    public MyAdapter(ArrayList<String> name, ArrayList<String> bdate, ArrayList<String> profile)
+    public MyAdapter(ArrayList<String> names, ArrayList<String> images, ArrayList<String> b_dates)
     {
-        this.name=name;
-        this.bdate=bdate;
-        this.profile=profile;
-
-
+        this.names=names;
+       // this.emails=emails;
+        this.images=images;
+        this.b_dates=b_dates;
+        Log.d("MyAdapter",b_dates.toString());
 
 
         //this.img=img;
@@ -47,8 +52,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.birthday_view, parent, false);
 
-
-        //Log.d("onCreateViewHolder",itemView.toString());
+        Log.d("onCreateViewHolder",itemView.toString());
 
 
         return new MyViewHolder(itemView);
@@ -60,54 +64,59 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>
     public void onBindViewHolder( MyViewHolder myViewHolder, int i)
     {
         //String im=img.get(i);
-        final String nm=name.get(i);
-        String bd=bdate.get(i);
+        final String nm=names.get(i);
+//        String em=emails.get(i);
 
-        String prf=profile.get(i);
-        //final String url=urls.get(i);
+        String img=images.get(i);
+        final String bd=b_dates.get(i);
 
-        final Context context=myViewHolder.prf.getContext();
-        //Log.d("Image",profile.get(0));
-        int id = context.getResources().getIdentifier(prf, "drawable", context.getPackageName());
+        final Context context=myViewHolder.img.getContext();
+        Log.d("Image",img);
+        //int id = context.getResources().getIdentifier(img, "drawable", context.getPackageName());
 
-        Glide.with(context).load(prf).into(myViewHolder.prf);
-        myViewHolder.nm.setText(nm);
-        myViewHolder.bd.setText("- "+bd);
+        String imageDataBytes = img.substring(img.indexOf(",")+1);
 
-        }
+        InputStream stream = new ByteArrayInputStream(Base64.decode(imageDataBytes.getBytes(), Base64.DEFAULT));
+
+        Bitmap bitmap = BitmapFactory.decodeStream(stream);
+
+        myViewHolder.img.setImageBitmap(bitmap);
+        //startAppAd= new StartAppAd(context);
+        myViewHolder.bdate.setText(bd);
+        myViewHolder.names.setText(nm);
+        //myViewHolder.email.setText(em);
 
 
 
 
 
 
+    }
 
     @Override
     public int getItemCount()
     {
-        return profile.size();
+        return names.size();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder
     {
-        ImageView prf;
-        TextView nm;
-        TextView bd;
-        //TextView urls;
+        ImageView img;
+        //TextView email;
+        TextView names;
+        TextView bdate;
 
         RelativeLayout rlt;
         public MyViewHolder(View itemView)
         {
             super(itemView);
 
-            prf=(ImageView)itemView.findViewById(R.id.profile);
-            nm=(TextView)itemView.findViewById(R.id.name);
-            bd=(TextView)itemView.findViewById(R.id.bdate);
-
-            //urls=(TextView)itemView.findViewById(R.id.urls);
-            rlt=(RelativeLayout)itemView.findViewById(R.id.rlt);
-
-            //Log.d("MyViewHolder",txt.toString());
+            img=(ImageView)itemView.findViewById(R.id.profile);
+           // email=(TextView)itemView.findViewById(R.id.em);
+            bdate=(TextView)itemView.findViewById(R.id.bdate);
+            names=(TextView)itemView.findViewById(R.id.name);
+            //rlt=(RelativeLayout)itemView.findViewById(R.id.rlt);
+            Log.d("MyViewHolder",bdate.toString());
 
         }
     }
